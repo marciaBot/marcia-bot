@@ -1,0 +1,4 @@
+[default]
+EXTENSIONS = [
+    "whatsappbot.blueprints.conversation"
+]
