@@ -1,9 +1,4 @@
 {% block %}
-    {% client %}biscoito(.*){% endclient %}
-    {% response %}biscoito é bom{% endresponse %}
-{% endblock %}
-
-{% block %}
     {% client %}(comprar|desejo comprar|compra)(.*){% endclient %}
     {% response %}Diga a quantidade de %2 que deseja {!pedido:%2}{% endresponse %}
 {% endblock %}

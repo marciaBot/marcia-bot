@@ -14,9 +14,9 @@ def home():
 def bot():
     incoming_msg = request.values.get('Body', '').lower()
     resp = MessagingResponse()
-    msg = resp.message(marcia.say(incoming_msg))
+    msg = resp.message()
+    msg.body(marcia.say(incoming_msg))
     return str(resp)
-    return "funfou"
 
 def init_app(app):
     app.register_blueprint(bp)
