@@ -1,31 +1,11 @@
+import re
+pattern_data = r"(?<=\d{2}\/\d{2}\/\d{4}\s\d{2}\:\d{2}\s\-\s).*"
+pattern_name = r"(?<=:\s).+"
 arquivo = open("whatsappbot/Conversa do WhatsApp com Wellen.txt", "r")
 conversa = arquivo.readlines()
-conversa = [c.replace("\n", " ")[19:] for c in conversa]
-conversa_formatada = []
-resposta_formatada = ""
-mesma_pessoa_falando = False
-ultima_pessoa_falando = "dsasds"
-inicio = 0
-for c in conversa:
-    if ultima_pessoa_falando in c:
-        mesma_pessoa_falando = True
-    else:
-        mesma_pessoa_falando = False
-    try:
-        ultima_pessoa_falando = c[:c.index(":")+2]
-    except:
-        pass
-    if mesma_pessoa_falando:
-        resposta_formatada += " "+c.replace(ultima_pessoa_falando, "").strip()
-    else:
-        if resposta_formatada != "":
-            conversa_formatada.append(resposta_formatada+"\n")
-        resposta_formatada = ""
-        resposta_formatada += c.replace(ultima_pessoa_falando, "").strip()
-
-print(conversa_formatada[:10])
-
+conversa = [re.search(pattern_data, c) for c in conversa]
+conversa = [(re.search(pattern_name, c.group()).group() if re.search(pattern_name, c.group()) is not None else "" )if c is not None else "" for c in conversa]
 saida = open("Conversa_Formatada.txt", "w")
-saida.writelines(conversa_formatada)
+saida.writelines(conversa)
 arquivo.close()
 saida.close()

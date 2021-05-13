@@ -1,34 +1,54 @@
-{% block %}
-    {% client %}(comprar|desejo comprar|compra)(.*){% endclient %}
-    {% response %}Diga a quantidade de %2 que deseja {!pedido:%2}{% endresponse %}
-{% endblock %}
+{% topic apresentacao %}
+  {% block %}
+    {% client %}(\+\d{12,13})\s(oi|olá|tudo bem?|bom dia|boa noite|boa tarde){% endclient %}
+    {% response %}{% call verificar_numero: %1 %}{% endresponse %}
+  {% endblock %}
+{% endtopic %}
 
-{% block %}
-    {% client %}(.*){% endclient %}
-    {% prev %}(.*)Diga a quantidade de (.*){% endprev %}
-    {% response %}Temos %1 de {pedido } em nosso estoque! {% endresponse %}
-{% endblock %}
+{% topic cadastro %}
 
+  {% block %}
+    {% client %}(.*)(?P<resposta>.*){% endclient %}
+    {% prev %}(.*)Vimos que seu número não está cadastrado, você já possui cadastro?{% endprev %}
+    {% response %}{% if %resposta == sim|%resposta == sou sim|%resposta == tenho cadastrado|%resposta==sou cadastrado %}Pode me informar seu CPF?{% else %}Gostaria de se cadastrar?{% endif %}{% endresponse %}
+  {% endblock %}
 
-{%block%}
-  {% client %} salve (.*) {%endclient%}
-  {% response %}Salvei {termo:%1}{% endresponse %}
-{%endblock%}
+  {% block %}
+    {% client %}(.*)(sim|poder ser|claro){% endclient %}
+    {% prev %}Gostaria de se cadastrar?{% endprev %}
+    {% response %}Por favor, me informe seu CPF{% endresponse %}
+  {% endblock %}
 
-{%block%}
-  {% client %} salvado {%endclient%}
-  {% response %}Valor salvo: {termo}{% endresponse %}
-{%endblock%}
+  {% block %}
+    {% client %}(\+\d{12,13})\s(.*)(\d{11}|\d{3}\.\d{3}\.\d{3}\-\d{2}){% endclient %}
+    {% prev %}Por favor, me informe seu CPF{% endprev %}
+    {% response %}{% call cadastrar_numero: %1 %}{% call cadastrar_cpf: %3 %}{% endresponse %}
+  {% endblock %}
 
-{%block%}
-  {% client %} fale (.*) {%endclient%}
-  
-  {% response %} {variable} {% endresponse %}
+  {% block %}
+    {% client %}(é|claro, é|claro é|é esse aqui|aqui está)(?P<cpf>.*){% endclient %}
+    {% prev %}Pode me informar seu CPF?{% endprev %}
+    {% response %}{% call verificar_cpf: %cpf %}{% endresponse %}
+  {% endblock %}
 
-{%endblock%}
+{% endtopic %}
 
-{% block %}
+{% topic compra %}
+
+  {% block %}
+    {% client %}(.*)(comprar|desejo comprar|compra)(.*){% endclient %}
+    {% response %}Qual o nome do remédio que você deseja?{% endresponse %}
+  {% endblock %}
+
+  {% block %}
+    {% client %}(é|se chama|é o|acho que é|se não me engano é|quero o|quero|me veja|gostaria d?||)(?P<remedio>.*){% endclient %}
+    {% prev %}Qual o nome do remédio que você deseja?{% endprev %}
+    {% response %}Você deseja comprar %remedio ?{% endresponse %}
+  {% endblock %}
+
+  {% block %}
     {% client %}(.*){% endclient %}
     {% response %}Desculpa, não entendi{% endresponse %}
-{% endblock %}
+  {% endblock %}
 
+{% endtopic %}
