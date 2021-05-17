@@ -98,9 +98,11 @@ def cadastrar_observacao(session, query):
     values = GET_VALUES.search(query).group().replace("(", "").replace(",", "").strip()
     enderecos_novos[number]["observacao"] = values
     id_client = get_api('https://marcia-api.herokuapp.com/cliente/numero/{}'.format(number)).json()['clienteId']
-    print(id_client)
     enderecos_novos[number]["clienteId"] = int(id_client)
-    post_api('https://marcia-api.herokuapp.com/cliente', json=enderecos_novos[number])
+    print(enderecos_novos)
+    print(enderecos_novos[number])
+    resposta = post_api('https://marcia-api.herokuapp.com/endereco', json=enderecos_novos[number])
+    print(resposta.status_code)
     return "Seu cadastrado foi realizado com sucesso! Agora voltando ao seu pedido, o que o senhor deseja?"
 
 @register_call("verificar_cpf")
@@ -124,14 +126,10 @@ def verificar_numero(session, query):
 @bp.route("/bot", methods=["POST"])
 def bot():
     incoming_msg = request.values.get('Body', '').lower()
-    print(incoming_msg)
-    
     numero = request.values.get('From', '').lower().replace("whatsapp:", "").strip()
     resp = MessagingResponse()
     msg = resp.message()
-    print(numero+" "+incoming_msg)
     marcia_disse = marcia.say(numero+" "+incoming_msg)
-    print(marcia_disse)
     msg.body(marcia_disse)
     return str(resp)
     
