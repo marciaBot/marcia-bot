@@ -1,6 +1,6 @@
 {% topic apresentacao %}
   {% block %}
-    {% client %}(\+\d{12,13})\s(oi|olá|tudo bem?|bom dia|boa noite|boa tarde){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(oi|olá|tudo bem?|bom dia|boa noite|boa tarde){% endclient %}
     {% response %}{% call verificar_numero: %1 %}{% endresponse %}
   {% endblock %}
 {% endtopic %}
@@ -14,67 +14,67 @@
   {% endblock %}
 
   {% block %}
-    {% client %}(.*)(sim|poder ser|claro){% endclient %}
+    {% client %}(.*)(sim|poder ser|claro|s|si|y|ye|yes|yeah|yep|claro|uhum|pode ser){% endclient %}
     {% prev %}Gostaria de se cadastrar?{% endprev %}
     {% response %}Por favor, me informe seu CPF{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*)(\d{11}|\d{3}\.\d{3}\.\d{3}\-\d{2}){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*)(\d{11}|\d{3}\.\d{3}\.\d{3}\-\d{2}){% endclient %}
     {% prev %}Por favor, me informe seu CPF{% endprev %}
     {% response %}{% call cadastrar_numero: %1 %}{% call cadastrar_cpf: (%3, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*)(\d{8}|\d{2}[\/\-\.]\d{2}[\/\-\.](\d{4}|\d{2})){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*)(\d{8}|\d{2}[\/\-\.]\d{2}[\/\-\.](\d{4}|\d{2})){% endclient %}
     {% prev %}Me informe sua data de nascimento{% endprev %}
     {% response %}{% call cadastrar_data_nascimento: (%3, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual o seu nome completo?{% endprev %}
     {% response %}{% call cadastrar_nome: (%2, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual o seu bairro?{% endprev %}
     {% response %}{% call cadastrar_bairro: (%2, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual a sua rua?{% endprev %}
     {% response %}{% call cadastrar_rua: (%2, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(\d*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(\d*){% endclient %}
     {% prev %}Qual o número da sua casa?{% endprev %}
     {% response %}{% call cadastrar_numero_casa: (%2, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(\d*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(\d*){% endclient %}
     {% prev %}Qual o seu CEP?{% endprev %}
     {% response %}{% call cadastrar_cep: (%2, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual o complemento para seu endereço?{% endprev %}
     {% response %}{% call cadastrar_complemento: (%2, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Alguma referência para sua localização?{% endprev %}
     {% response %}{% call cadastrar_referencia: (%2, %1) %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Alguma observação?{% endprev %}
     {% response %}{% call cadastrar_observacao: (%2, %1) %}{% endresponse %}
   {% endblock %}
@@ -90,29 +90,29 @@
 {% topic compra %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(quero|desejo|gostaria de|quero comprar|gostaria de comprar|me veja|vocês tem|vcs tem|vc tem|vc teria|você teria|teria)\s(\d{1,20})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(quero|desejo|gostaria de|quero comprar|gostaria de comprar|me veja|vocês tem|vcs tem|vc tem|vc teria|você teria|teria)\s(\d{1,20})\s(.*){% endclient %}
     {% response %}Você gostaria de comprar %3 %4?{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(sim|isso|s|si|y|ye|yes|yep|yeah)(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(sim|isso|s|si|y|ye|yes|yep|yeah)(.*){% endclient %}
     {% prev %}Você gostaria de comprar .*{% endprev %}
     {% response %}Veremos em nosso estoque a disponibilidade, aguarde um momento{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(quero|desejo comprar|gostaria de|quero comprar|gostaria de comprar|me veja|vocês tem|vcs tem|vc tem|vc teria|você teria|teria)\s(remedio|remédio|medicamento)(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(quero|desejo comprar|gostaria de|quero comprar|gostaria de comprar|me veja|vocês tem|vcs tem|vc tem|vc teria|você teria|teria)\s(remedio|remédio|medicamento)(.*){% endclient %}
     {% response %}Qual o nome do remédio que você deseja comprar?{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual o nome do remédio que você deseja comprar?{% endprev %}
     {% response %}Qual a quantidade de %2 que você deseja?{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(\+\d{12,13})\s(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual a quantidade de (.*){% endprev %}
     {% response %}Irei verificar se há disponibilidade para o seu remédio, um minuto...{% endresponse %}
   {% endblock %}

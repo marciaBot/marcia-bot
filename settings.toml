@@ -5,5 +5,6 @@ EXTENSIONS = [
 
 [production]
 EXTENSIONS = [
-    "whatsappbot.blueprints.conversation"
+    "whatsappbot.blueprints.conversation",
+    "whatsappbot.extensions.alert_people"
 ]
