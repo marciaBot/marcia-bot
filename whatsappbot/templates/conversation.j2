@@ -90,14 +90,25 @@
 {% topic compra %}
 
   {% block %}
-    {% client %}(whatsapp:\+\d{12,13})\s(quero|desejo|gostaria de|quero comprar|gostaria de comprar|me veja|vocês tem|vcs tem|vc tem|vc teria|você teria|teria)\s(\d{1,20})\s(.*){% endclient %}
-    {% response %}Você gostaria de comprar %3 %4?{% endresponse %}
+    {% client %}(whatsapp:\+\d{12,13})\s(quero|queria|desejo|gostaria de|quero comprar|gostaria de comprar|me veja|vocês tem|vcs tem|vc tem|vc teria|você teria|teria)\s(\d{1,20})\s(.*){% endclient %}
+    {% response %}{% call verificar_produto: %4, %3 %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% client %}(whatsapp:\+\d{12,13})\s(sim|isso|s|si|y|ye|yes|yep|yeah)(.*){% endclient %}
+    {% client %}(whatsapp:\+\d{12,13})\s(?P<resp>.*)(.*){% endclient %}
     {% prev %}Você gostaria de comprar .*{% endprev %}
-    {% response %}Veremos em nosso estoque a disponibilidade, aguarde um momento{% endresponse %}
+    {% response %}{% if %resp == sim | %resp == s %}Certo, seu pedido foi posto no carrinho. Deseja mais alguma coisa?{% else %}Certo, você deseja outra coisa?{% endif %}{% endresponse %}
+  {% endblock %}
+
+  {% block %}
+    {% client %}(whatsapp:\+\d{12,13})\s(?P<resp>.*)(.*){% endclient %}
+    {% prev %}Certo, seu pedido foi posto no carrinho. Deseja mais alguma coisa?|Certo, você deseja outra coisa?{% endprev %}
+    {% response %}{% call verificar_resposta_pedir_mais_alguma_coisa:%resp  %}{% endresponse %}
+  {% endblock %}
+
+  {% block %}
+    {% client %}(whatsapp:\+\d{12,13})\s(crédito|debito|dinheiro)(.*){% endclient %}
+    {% response %}Certo, {nome} seu pedido já está sendo processado e em breve chegará em sua residência, obrigado pela preferência :){% endresponse %}
   {% endblock %}
 
   {% block %}
@@ -108,13 +119,26 @@
   {% block %}
     {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual o nome do remédio que você deseja comprar?{% endprev %}
-    {% response %}Qual a quantidade de %2 que você deseja?{% endresponse %}
+    {% response %}Qual a quantidade de { medicamento : %2 } que você deseja?{% endresponse %}
   {% endblock %}
 
   {% block %}
     {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual a quantidade de (.*){% endprev %}
-    {% response %}Irei verificar se há disponibilidade para o seu remédio, um minuto...{% endresponse %}
+    {% response %}Seu pedido foi feito! O seu remédio é para ser ingerido de 1 em 1 hora, gostaria que avisassemos o senhor a hora em que deve tomá-lo?{% endresponse %}
+  {% endblock %}
+
+  {% block %}
+    {% set confirm = ['sim', 'si', 'claro', 'pode ser'] %}
+    {% client %}(whatsapp:\+\d{12,13})\s(?P<resposta>.*){% endclient %}
+    {% prev %}Seu pedido foi feito! O seu remédio é para ser ingerido de 1 em 1 hora, gostaria que avisassemos o senhor a hora em que deve tomá-lo?{% endprev %}
+    {% response %}{% if %resposta in confirm %}Qual horário que você irá tomá-lo?{% else %}Então já está tudo certo! Obrigado pela preferência!{% endif %} {% endresponse %}
+  {% endblock %}
+
+  {% block %}
+    {% client %}(whatsapp:\+\d{12,13})\s(?P<resposta>.*){% endclient %}
+    {% prev %}Qual horário que você irá tomá-lo?{% endprev %}
+    {% response %}{% call alert_client: (%1, %resposta, { medicamento }) %}{% endresponse %}
   {% endblock %}
 
 {% endtopic %}

@@ -1,4 +1,5 @@
 import threading
+from time import sleep
 
 class AlertPeople():
 
@@ -15,7 +16,7 @@ class AlertPeople():
     def keep_processing(self):
         while True:
             self.process()
-            sleep(60)
+            sleep(1)
 
     def process(self):
         if not self.peoples_to_alert:
@@ -28,4 +29,4 @@ class AlertPeople():
         self.peoples_to_alert.append(people)
 
 def init_app(app):
-    AlertPeople().init_app(app)
+    app.alert_people = AlertPeople()

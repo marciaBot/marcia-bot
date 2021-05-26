@@ -1,7 +1,9 @@
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 import os
+import re
 
+"""
 list_conversa = open(os.getcwd()+"/whatsappbot/Conversa_Formatada.txt", "r")
 list_conversa = [c.replace("\n", "") for c in list_conversa]
 chatbot = ChatBot('Elielson_bot')
@@ -38,8 +40,8 @@ trainer.train([
     "Certo, estaremos enviando seu remédio o mais rápido possível, obrigado por comprar conosco!",
     "Obrigado"
 ])
-
-while True:
+"""
+while False:
     pergunta = input("você: ")
     response = chatbot.get_response(pergunta)
     print("Bot: ", response)
