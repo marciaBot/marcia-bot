@@ -21,4 +21,4 @@ def alert_client(session, query):
     nome = nome.capitalize()
     new_client_alert = EatTime(number, medicine, hour, nome, 1)
     alert_people.add_people(new_client_alert)
-    return "O senhor será avisado sempre nesse horário :D"
+    return "O senhor será avisado sempre nesse horário de 8 em 8 horas :D"

@@ -10,8 +10,8 @@ class EatTime():
         self.medicine = med
         self.time = time
         self.time_add = time_add
-        self.account_sid = "ACcb9ced49169d33bbfbfa709617ec330c"
-        self.auth_token  = "40bc36fd43693fcb56b99cde5937af1b"
+        self.account_sid = "ACbaa882bceb49d813a37ac1b572e12a15"
+        self.auth_token  = "15d0965d5b2c1e52adab012a31d21c73"
         self.client = Client(self.account_sid, self.auth_token)
 
     def is_hour_to_eat(self):

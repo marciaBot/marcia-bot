@@ -100,4 +100,8 @@ def cadastrar_observacao(session, query):
     print(resposta.status_code)
     return "Seu cadastrado foi realizado com sucesso! Agora voltando ao seu pedido, o que o senhor deseja?"
 
+def cadastrar_venda(id_cliente):
+    nova_venda = {'aprovado': False, 'clienteId': id_cliente, 'obs': ''}
+    return post_api('https://marcia-api.herokuapp.com/venda', json=nova_venda).status_code
+
 

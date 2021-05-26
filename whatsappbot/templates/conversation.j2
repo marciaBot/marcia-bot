@@ -91,7 +91,7 @@
 
   {% block %}
     {% client %}(whatsapp:\+\d{12,13})\s(quero|queria|desejo|gostaria de|quero comprar|gostaria de comprar|me veja|vocês tem|vcs tem|vc tem|vc teria|você teria|teria)\s(\d{1,20})\s(.*){% endclient %}
-    {% response %}{% call verificar_produto: %4, %3 %}{% endresponse %}
+    {% response %}{% call verificar_produto: {medicamento: %4}, %3, %1 %}{% endresponse %}
   {% endblock %}
 
   {% block %}
@@ -108,7 +108,7 @@
 
   {% block %}
     {% client %}(whatsapp:\+\d{12,13})\s(crédito|debito|dinheiro)(.*){% endclient %}
-    {% response %}Certo, {nome} seu pedido já está sendo processado e em breve chegará em sua residência, obrigado pela preferência :){% endresponse %}
+    {% response %}{% call verificar_resposta_forma_pagamento: %1, %2 %}{% endresponse %}
   {% endblock %}
 
   {% block %}
@@ -125,14 +125,13 @@
   {% block %}
     {% client %}(whatsapp:\+\d{12,13})\s(.*){% endclient %}
     {% prev %}Qual a quantidade de (.*){% endprev %}
-    {% response %}Seu pedido foi feito! O seu remédio é para ser ingerido de 1 em 1 hora, gostaria que avisassemos o senhor a hora em que deve tomá-lo?{% endresponse %}
+    {% response %}{% call verificar_produto: {medicamento}, %2, %1 %}{% endresponse %}
   {% endblock %}
 
   {% block %}
-    {% set confirm = ['sim', 'si', 'claro', 'pode ser'] %}
     {% client %}(whatsapp:\+\d{12,13})\s(?P<resposta>.*){% endclient %}
-    {% prev %}Seu pedido foi feito! O seu remédio é para ser ingerido de 1 em 1 hora, gostaria que avisassemos o senhor a hora em que deve tomá-lo?{% endprev %}
-    {% response %}{% if %resposta in confirm %}Qual horário que você irá tomá-lo?{% else %}Então já está tudo certo! Obrigado pela preferência!{% endif %} {% endresponse %}
+    {% prev %}(.*)(\n\n)Ah, mais uma coisa, você gostaria que avisássemos o horário que você deve tomar seu remédio?{% endprev %}
+    {% response %}{% if %resposta==s|%resposta==si|%resposta==sim|%resposta==pode ser|%resposta==quero%}Qual horário que você irá tomá-lo?{% else %}Então já está tudo certo! Obrigado pela preferência!{% endif %} {% endresponse %}
   {% endblock %}
 
   {% block %}
@@ -142,6 +141,11 @@
   {% endblock %}
 
 {% endtopic %}
+
+{% block %}
+  {% client %}de nada{% endclient %}
+  {% response %}:){% endresponse %}
+{% endblock %}
 
 {% block %}
   {% client %}(.*){% endclient %}
