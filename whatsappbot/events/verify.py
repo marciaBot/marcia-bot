@@ -2,14 +2,11 @@ from chatbot import register_call
 from requests import get as get_api
 from requests import post as post_api
 from requests import put as put_api
-from whatsappbot.services.validate_users import *
-from whatsappbot.db import lista_produtos, cadastros_novos, enderecos_novos, limpar_lista_produtor
-import ast
-from flask import current_app
-from whatsappbot.services.eat_time import EatTime
-from whatsappbot.extensions.alert_people import AlertPeople
 from fuzzywuzzy import process, fuzz
 from .register import cadastrar_venda
+from ..db import lista_produtos, limpar_lista_produtor, cadastros_novos
+from ..extensions.alert_people import AlertPeople
+from ..services.validate_users import format_number, GET_NAME
 
 alert_people = AlertPeople()
 
@@ -36,35 +33,36 @@ def verificar_resposta_forma_pagamento(session, query):
     print(lista_produtos)
     for p in lista_produtos:
         item_venda = {'produtoId': p['id'], 'quantidade': p['quantidade'], 'vendaId': venda['id']}
-        status = post_api('https://marcia-api.herokuapp.com/item-venda', json=item_venda).status_code
-        print("Status item venda: ", status)
+        #status = post_api('https://marcia-bot-patient-cloud-6675.fly.dev/item-venda', json=item_venda).status_code
+        #print("Status item venda: ", status)
     venda['obs'] = "Forma de pagamento será em: "+forma_pagamento
-    status = put_api('https://marcia-api.herokuapp.com/venda/{}'.format(venda['id']), json=venda).status_code
-    print("Status put Venda: ", status)
+    #status = put_api('https://marcia-bot-patient-cloud-6675.fly.dev/venda/{}'.format(venda['id']), json=venda).status_code
+    #print("Status put Venda: ", status)
     limpar_lista_produtor()
     return "Seu pedido está finalizado e em breve chegará em sua residência!\n\nAh, mais uma coisa, você gostaria que avisássemos o horário que você deve tomar seu remédio?"
 
 
 @register_call("verificar_cpf")
 def verificar_cpf(session, query):
-    resposta = get_api('https://marcia-api.herokuapp.com/cliente/cpf/{}'.format(query)).status_code
-    return "Deseja adicionar esse número em seu cadastro?" if query in fake_cpfs else "Não encontramos seu CPF, deseja cadastrar?"
+    numero = format_number(query)
+    resposta = numero in cadastros_novos
+    return "Deseja adicionar esse número em seu cadastro?" if resposta else "Não encontramos seu CPF, deseja cadastrar?"
 
 @register_call("verificar_numero")
 def verificar_numero(session, query):
     number = format_number(query)
-    url = 'https://marcia-api.herokuapp.com/cliente/numero/{}'.format(number)
-    resposta = get_api(url)
+    #url = 'https://marcia-bot-patient-cloud-6675.fly.dev/cliente/numero/{}'.format(number)
+    #resposta = get_api(url)
     marcia_resposta = ""
-     
-    if resposta.status_code == 404:
+    numero_cadastrado = number in cadastros_novos
+    if numero_cadastrado is False:
         marcia_resposta = "Olá, tudo bem? Vimos que seu número não está cadastrado, você já possui cadastro?"
     else:
-        nome = GET_NAME.search(resposta.json()['nome']).group()
+        nome = cadastros_novos[number]["nome"]
         nome = nome.capitalize()
-        session.memory['nome']=nome
+        session.memory['nome'] = nome
         marcia_resposta = "Olá, {}, tudo bem? O que você deseja?".format(nome)
-    return  marcia_resposta
+    return marcia_resposta
 
 @register_call("verificar_produto")
 def verificar_produto(session, query):
@@ -72,14 +70,14 @@ def verificar_produto(session, query):
     medicine, quantidade, numero = query.split(',')
     medicine, quantidade, numero = [medicine.strip(), quantidade.strip(), numero.strip()]
     numero = format_number(numero)
-    remedios = get_api('https://marcia-api.herokuapp.com/produto').json()
+    remedios = lista_produtos
     remedios_nomes = [p['nome'].lower() for p in remedios]
     remedio_encontrado = process.extractOne(medicine, remedios_nomes, scorer=fuzz.token_sort_ratio, score_cutoff=75)
     remedio_encontrado = remedio_encontrado[0] if remedio_encontrado is not None else None
     
     if remedio_encontrado:
         if not verificar_cliente_possui_venda(numero):
-            cliente = get_api('https://marcia-api.herokuapp.com/cliente/numero/{}'.format(numero)).json()
+            cliente = get_api('https://marcia-bot-patient-cloud-6675.fly.dev/cliente/numero/{}'.format(numero)).json()
             print("Status cadastro venda: ", cadastrar_venda(cliente['clienteId']))
         preco = [p['preco'] for p in remedios if p['nome'].lower() == remedio_encontrado][0]
         id_remedio = [p['id'] for p in remedios if p['nome'].lower() == remedio_encontrado][0]
@@ -90,8 +88,8 @@ def verificar_produto(session, query):
 
 def verificar_cliente_possui_venda(numero):
     
-    cliente = get_api('https://marcia-api.herokuapp.com/cliente/numero/{}'.format(numero)).json()
-    vendas = get_api('https://marcia-api.herokuapp.com/venda')
+    cliente = get_api('https://marcia-bot-patient-cloud-6675.fly.dev/cliente/numero/{}'.format(numero)).json()
+    vendas = get_api('https://marcia-bot-patient-cloud-6675.fly.dev/venda')
     vendas_status = vendas.status_code
     vendas = vendas.json()
     venda_cliente = []
@@ -102,8 +100,8 @@ def verificar_cliente_possui_venda(numero):
     return False
 
 def ultima_venda_cliente(numero):
-    cliente = get_api('https://marcia-api.herokuapp.com/cliente/numero/{}'.format(numero)).json()
-    vendas = get_api('https://marcia-api.herokuapp.com/venda').json()
+    cliente = get_api('https://marcia-bot-patient-cloud-6675.fly.dev/cliente/numero/{}'.format(numero)).json()
+    vendas = get_api('https://marcia-bot-patient-cloud-6675.fly.dev/venda').json()
     venda_cliente = [v for v in vendas if v['clienteId'] == cliente['clienteId']]
     if len(venda_cliente) > 0:
         return venda_cliente[-1]

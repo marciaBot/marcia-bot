@@ -1,9 +1,6 @@
 from chatbot import register_call
 from requests import get as get_api
-from requests import post as post_api
 from whatsappbot.services.validate_users import *
-from whatsappbot.db import *
-import ast
 from whatsappbot.services.eat_time import EatTime
 from whatsappbot.extensions.alert_people import AlertPeople
 

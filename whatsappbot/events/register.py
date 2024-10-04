@@ -1,9 +1,8 @@
+import random
 from chatbot import register_call
-from requests import get as get_api
-from requests import post as post_api
 from whatsappbot.services.validate_users import *
 from whatsappbot.db import *
-import ast
+
 
 @register_call("cadastrar_numero")
 def cadastrar_numero(session, query):
@@ -35,7 +34,7 @@ def cadastrar_nome(session, query):
     number = format_number(number)
     values = GET_VALUES.search(query).group().replace("(", "").replace(",", "").strip()
     cadastros_novos[number]["nome"] = values
-    post_api('https://marcia-api.herokuapp.com/cliente', json=cadastros_novos[number])
+    #post_api('https://marcia-bot-patient-cloud-6675.fly.dev/cliente', json=cadastros_novos[number])
     return "Qual o seu bairro?"
 
 @register_call("cadastrar_bairro")
@@ -92,16 +91,16 @@ def cadastrar_observacao(session, query):
     number = format_number(number)
     values = GET_VALUES.search(query).group().replace("(", "").replace(",", "").strip()
     enderecos_novos[number]["observacao"] = values
-    id_client = get_api('https://marcia-api.herokuapp.com/cliente/numero/{}'.format(number)).json()['clienteId']
-    enderecos_novos[number]["clienteId"] = int(id_client)
+    id_client = random.randint(0, 200)
+    enderecos_novos[number]["clienteId"] = id_client
     print(enderecos_novos)
     print(enderecos_novos[number])
-    resposta = post_api('https://marcia-api.herokuapp.com/endereco', json=enderecos_novos[number])
-    print(resposta.status_code)
+    #resposta = post_api('https://marcia-bot-patient-cloud-6675.fly.dev/endereco', json=enderecos_novos[number])
+    #print(resposta.status_code)
     return "Seu cadastrado foi realizado com sucesso! Agora voltando ao seu pedido, o que o senhor deseja?"
 
 def cadastrar_venda(id_cliente):
     nova_venda = {'aprovado': False, 'clienteId': id_cliente, 'obs': ''}
-    return post_api('https://marcia-api.herokuapp.com/venda', json=nova_venda).status_code
+    return 200#post_api('https://marcia-bot-patient-cloud-6675.fly.dev/venda', json=nova_venda).status_code
 
 

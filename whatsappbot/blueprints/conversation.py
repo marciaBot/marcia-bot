@@ -14,9 +14,12 @@ def home():
 def bot():
     incoming_msg = request.values.get('Body').lower()
     numero = request.values.get('From').strip()
+
+    print(f"Mensagem: {incoming_msg} | numero: {numero}")
     resp = MessagingResponse()
     msg = resp.message()
     marcia_disse = marcia.say(numero+" "+incoming_msg)
+    print(f"Resposta do bot: {marcia}")
     msg.body(marcia_disse)
     return str(resp)
 
